@@ -1,0 +1,33 @@
+#version 330 core
+uniform vec3 lightColor;
+uniform vec3 lightPos;  
+uniform vec3 viewPos;
+out vec4 color;
+in vec3 normal;
+in vec3 FragPos;  
+void main(){
+  
+  vec3 objectColor=vec3(1.0f,1.0f,0.0f);  
+  float ambientStrength = 0.2;
+  vec3 ambient = ambientStrength * lightColor;
+vec3 result = ambient * objectColor;
+
+
+  vec3 norm = normalize(normal);
+vec3 lightDir = normalize(lightPos - FragPos);  
+
+float diff = max(dot(norm, lightDir), 0.0);
+diff=diff*0.7f;
+vec3 diffuse = diff * lightColor;
+result=result+diffuse*objectColor;
+
+float specularStrength = 0.4;
+vec3 viewDir = normalize(viewPos - FragPos);
+vec3 reflectDir = reflect(-lightDir, norm);  
+float spec = pow(max(dot(viewDir, reflectDir), 0.0), 64);
+vec3 specular = specularStrength * spec * lightColor;  
+
+result=result+specular*objectColor;
+
+  color = vec4(result, 1.0);//the final color
+}
